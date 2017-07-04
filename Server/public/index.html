@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse:collapse;
+        }
+        th, td{
+           border: 2px solid black; 
+        }
+    </style>
+
+       <script src="/js/sprintf.js"></script>
+     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+     <script src="/js/jquery-3.1.1.min.js"></script> 
+     <script src="./function.js" ></script>
+  
+
+</head>
+<body>
+    <h1>welcome to gameroom</h1>
+    <h3>Let's play with us.</h3>
+    <table>
+        <tr>
+            <th>Title</th> <th>context</th>
+        </tr>
+        <tr>
+            <td>node.js</td> <td>How to make app</td>
+        </tr>
+    </table>
+    
+    <b>Send message</b><p>
+    Message  <input type="text" id="msgbox"/>
+    <br>
+    <span id="msgs"></span>
+
+    <div id="createRoom">
+        Room <input type="text" id="roomName"/>
+        <input type="button" id="create" value="Create"/>
+    </div>
+
+    <span id="rooms">
+
+    </span>
+     
+    <script type ="text/javascript">
+
+     var o1 = {val1:1, val2:2, val3:3};
+     var o2 = {v1:10, v2:50, v3:100, v4:25};
+     
+      sum(o1);
+    //  alret(sum.apply(o1));
+      alert(sum.apply(o1));
+
+      $('#msgs').append('data.msg'+'<BR>');
+
+       var socket = io.connect('http://localhost:3000'); 
+       
+       $("#msgbox").keyup(function(event) {
+            if (event.which == 13) {
+                socket.emit('fromclient',{msg:$('#msgbox').val()});
+                $('#msgbox').val('');
+            }
+        });
+       $("#create").click(function(event){
+            var roomTitle = $('#roomName').text;
+            var roomInfo = '<input type="button"' +
+            'id="room1"'+ 'value='+  "$('#roomName').text/>";
+
+            var temp = vsprintf("%s", roomTitle);
+           
+            $('#rooms').append(roomInfo);
+            $('#room1').val('호호야');
+       });
+
+       socket.on('toclient',function(data){
+            console.log(data.msg);
+            $('#msgs').append(data.msg+'<BR>');
+        });
+
+    </script>
+</body>
+</html>
