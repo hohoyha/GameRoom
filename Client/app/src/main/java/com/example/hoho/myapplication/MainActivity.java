@@ -10,10 +10,20 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,7 +52,45 @@ public class MainActivity extends AppCompatActivity {
                 task.execute();
             }
         });
+
+
+        mSocket.on("new message", onNewMessage);
+        mSocket.connect();
+
     }
+
+    private Emitter.Listener onNewMessage = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String username;
+                    String message;
+                    try {
+                        username = data.getString("username");
+                        message = data.getString("message");
+                        tv.setText("username: " + username + " message:" + message);
+                    } catch (JSONException e) {
+                        return;
+                    }
+
+
+                    tv.setText("test Listen");
+                    // add the message to view
+                    //addMessage(username, message);
+
+                }
+            });
+        }
+    };
+
+    public MainActivity getActivity() {
+        return this;
+    }
+
 
     class BackgroundTask extends AsyncTask<Integer, Integer, Integer> {
         protected void onPreExecute() {
@@ -116,4 +164,13 @@ public class MainActivity extends AppCompatActivity {
 
         return output.toString();
     }
+
+    private Socket mSocket;
+    {
+        try {
+            mSocket = IO.socket("http://172.30.1.33:3000");
+        } catch (URISyntaxException e) {}
+    }
+
+
 }
