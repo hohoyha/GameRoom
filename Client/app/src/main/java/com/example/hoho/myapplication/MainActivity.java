@@ -54,10 +54,53 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mSocket.on("new message", onNewMessage);
+        mSocket.on("newMessage", onNewMessage);
+        mSocket.on("news", onNews);
         mSocket.connect();
-
+        mSocket.on(Socket.EVENT_CONNECT, onConnect);
     }
+
+    private  Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject obj = new JSONObject();
+                    try {
+                        obj.put("username", "testMyName");
+                        obj.put("message", "testHoho");
+                        mSocket.emit("new message", obj);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
+
+    private  Emitter.Listener onNews = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // tv.setText("test Listen");
+                    JSONObject data = (JSONObject) args[0];
+                    String hello;
+
+                    try {
+                        hello = data.getString("hello");
+                        tv.append("hello: " + hello + "\n");
+                    } catch (JSONException e) {
+                        return;
+                    }
+                }
+            });
+        }
+    };
+
 
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
@@ -66,24 +109,28 @@ public class MainActivity extends AppCompatActivity {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                   // tv.setText("test Listen");
                     JSONObject data = (JSONObject) args[0];
-                    String username;
-                    String message;
+                    String username = "username";
+                    String message = "message";
                     try {
+
                         username = data.getString("username");
                         message = data.getString("message");
-                        tv.setText("username: " + username + " message:" + message);
+                        tv.append("username: " + username + " message:" + message + "\n");
                     } catch (JSONException e) {
+
+//                        tv.append("onNewMessage");
                         return;
                     }
 
 
-                    tv.setText("test Listen");
+                  //  tv.setText("test Listen");
                     // add the message to view
                     //addMessage(username, message);
-
                 }
             });
+
         }
     };
 
