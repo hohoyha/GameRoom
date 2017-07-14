@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        <h2>이벤트 보내기 받기</h2>
+        <ul>
+            <li>socket.emit('이벤트명',{메세지}); => 이벤트 보내기</li>
+            <li>socket.on('이벤트명',function(data){ }); => 이벤트 받기 </li>
+            <br/>
+            <li>socket.broadcast.emit('이벤트명',{메세지}); => 나를 제외한 클라이언트들 </li>
+            <li>io.sockets.emit('이벤트명',function(data){ }); => 모든 클라이언트들 </li>
+        </ul>
+
+        <h2> Room 처리 (그룹)</h2>
+        <ul>
+            <li>socket.join(‘roon name’) => 방참가 </li>
+            <li>socket.leave(‘roon name’) => 방나가기 </li>
+            <br/>
+            <li>io.sockets.in(‘roon name’).emit(‘event’,message) => 방안에 모든 클라이언트들 </li>
+            <li>socket.broadcast.to(‘roon name’).emit(‘event’,message) => 나를 제외한 방안에 클라이언트들 </li>
+            <br/>
+            <li>io.sockets.manager.rooms => 방목록 </li>
+            <li>io.sockets.clients(‘roon name’) =>  방안에 클라이언트들 </li>
+        </ul>
+</body>
+</html>

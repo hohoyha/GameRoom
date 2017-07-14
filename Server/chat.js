@@ -1,17 +1,53 @@
+
+var group = require('./socket_io/group');
+
+
+function userInfo(rname, nick) {
+    this.room = rname;
+    this.nick = nick;
+}
+
 module.exports = function(httpServer){
     var io = require('socket.io').listen(httpServer);
 
-    var numUsers = 0;
+     var numUsers = 0;
+     
+
+     var userlist = [];
+     var count = 0;
 
     io.on('connection', function(socket){
          var addedUser = false;
 
+          socket.emit('news', {hello: 'world'});
+         
+         var netFun = group(socket, io);
+        
+          netFun.join("hoho");
+          netFun.send();
+          netFun.boardcast();
+          count++;
+          var userinfo = new userInfo("hoho", "guest" + count);
+          userlist.push(userinfo);
+
+          socket.info = userinfo;
+          
+          socket.broadcast.to('hoho').emit('hello2', {});
+
+        //   io.sockets.in('hoho').emit('hello', {hi:'world'});
+            // group(socket).leave();
+
           socket.on('new message', function (data) {
             // we tell the client to execute 'new message'
-            socket.broadcast.emit('new message', {
-            username: socket.username,
-            message: data
+
+            socket.emit('new message', {
+                username: data.username,
+                message: data.message
             });
+            // socket.broadcast.emit('new message', {
+            // username: socket.username,
+            // message: data
+            // });
         });
 
          socket.on('add user', function(username){
@@ -29,9 +65,13 @@ module.exports = function(httpServer){
                  username: socket.username,
                  numUsers: numUsers
              });
+
+            //  socket.emit('hello', {});
          });
 
            socket.on('disconnect', function () {
+                netFun.leave(socket.info.room);
+                
                 if (addedUser) {
                 --numUsers;
 

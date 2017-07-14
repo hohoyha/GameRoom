@@ -46,7 +46,8 @@ $(function() {
     message = cleanInput(message);
     // if there is a non-empty message and a socket connection
     if (message && connected) {
-      $inputMessage.val('');
+      $inputMessage.va
+      l('');
       addChatMessage({
         username: username,
         message: message
@@ -165,10 +166,23 @@ $(function() {
 
 
    var socket = io.connect('http://localhost:3000'); 
+
+  
    var connected = false;
 
+    console.log('socket.io');
+
+
+   
+   socket.on('connect', function(client){
+      console.log('real connected');
+   });
+
+   
    socket.on('login', function(data){
         connected = true;
+        console.log('connected');
+
         // Display the welcome message
         var message = "Welcome to Socket.IO Chat – ";
         log(message, {
@@ -192,5 +206,16 @@ $(function() {
    socket.on('new message', function (data) {
     addChatMessage(data);
   });
+
+  socket.on('hello', function(data){
+    // addChatMessage(data);
+    console.log('hello');
+  });
+
+    socket.on('hello2', function(data){
+    // addChatMessage(data);
+    console.log('hello2');
+  });
+
 
 })
