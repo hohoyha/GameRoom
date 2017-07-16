@@ -8,6 +8,7 @@ module.exports = function(socket, io){
         join: function(name) {
             console.log("Join:" + name);
             socket.join(name);
+            socket.room = name;
 
             var nick =  usermgr.requestName();
             var user = new User(nick);
@@ -15,11 +16,26 @@ module.exports = function(socket, io){
         },
 
         leave: function(name) {
-            console.log("Leave:");5
-            socket.leave(name);
+            console.log("Leave:");
+            socket.leave(socket.room);
         },
+
+        joined : function(name){
+            //io.in(name).emit('joinedUser', {message:'test'});
+            socket.broadcast.to(socket.room).emit('joinedUser', {message:'joinedUser test'});
+        },
+
+        left : function(){
+            //io.in(name).emit('joinedUser', {message:'test'});
+            socket.broadcast.to(socket.room).emit('joinedUser', {message:'joinedUser test'});
+        },
+
+        chat: function(data){
+            io.in(socket.room).emit('chat', data );    
+        },
+
         send: function(){
-            io.sockets.in('hoho').emit('hello', {hi:'world'});
+            io.in(socket.room).emit('hello', {hi:'world'});
         },
 
         boardcast: function(){

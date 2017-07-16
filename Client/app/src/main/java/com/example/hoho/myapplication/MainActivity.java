@@ -54,11 +54,34 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        mSocket.on("newMessage", onNewMessage);
+        mSocket.on("new message", onNewMessage);
         mSocket.on("news", onNews);
         mSocket.connect();
         mSocket.on(Socket.EVENT_CONNECT, onConnect);
+        mSocket.on("hello", onHello);
     }
+
+    Emitter.Listener onHello =
+            new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // tv.setText("test Listen");
+                            JSONObject data = (JSONObject) args[0];
+                            String hello;
+
+                            try {
+                                hello = data.getString("hi");
+                                tv.append("hi: " + hello + "\n");
+                            } catch (JSONException e) {
+                                return;
+                            }
+                        }
+                    });
+                }
+            };
 
     private  Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
@@ -120,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         tv.append("username: " + username + " message:" + message + "\n");
                     } catch (JSONException e) {
 
-//                        tv.append("onNewMessage");
+                        tv.append("onNewMessage");
                         return;
                     }
 
@@ -170,12 +193,12 @@ public class MainActivity extends AppCompatActivity {
 
                 int resCode = conn.getResponseCode();
 
-                output.append("Success. GET \n" + String.valueOf(resCode) + "/n" );
-                if (resCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream())) ;
-                    String line = null;
-                    while(true) {
-                        line = reader.readLine();
+                        output.append("Success. GET \n" + String.valueOf(resCode) + "/n" );
+                        if (resCode == HttpURLConnection.HTTP_OK) {
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream())) ;
+                            String line = null;
+                            while(true) {
+                                line = reader.readLine();
                         if (line == null) {
                             break;
                         }
@@ -215,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
     private Socket mSocket;
     {
         try {
-            mSocket = IO.socket("http://172.30.1.33:3000");
+            mSocket = IO.socket("http://172.16.22.225:3000");
         } catch (URISyntaxException e) {}
     }
 

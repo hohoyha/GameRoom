@@ -26,13 +26,21 @@ app.get('/chat', function(req, res){
     res.render('chat');
 });
 
+app.get('/room', function(req, res){
+    res.render('room');
+});
+
 // var io = require('./game')(httpServer);
 
 // var value = sprintf("%s /n", 'hohoya');
 
 // console.log(value);
 
-var io = require('./chat')(httpServer);
+var io = require('socket.io').listen(httpServer);
+
+var chat = require('./chat')(io);
+
+ var room = require('./room')(io);
 
 //Handling 404
 app.use(function(req,res){

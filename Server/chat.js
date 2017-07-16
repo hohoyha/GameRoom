@@ -7,8 +7,10 @@ function userInfo(rname, nick) {
     this.nick = nick;
 }
 
-module.exports = function(httpServer){
-    var io = require('socket.io').listen(httpServer);
+module.exports = function(io){
+    // var io = require('socket.io').listen(httpServer);
+
+    var nio = io.of('/game');
 
      var numUsers = 0;
      
@@ -16,12 +18,12 @@ module.exports = function(httpServer){
      var userlist = [];
      var count = 0;
 
-    io.on('connection', function(socket){
+    nio.on('connection', function(socket){
          var addedUser = false;
 
           socket.emit('news', {hello: 'world'});
          
-         var netFun = group(socket, io);
+         var netFun = group(socket, nio);
         
           netFun.join("hoho");
           netFun.send();
@@ -32,7 +34,7 @@ module.exports = function(httpServer){
 
           socket.info = userinfo;
           
-          socket.broadcast.to('hoho').emit('hello2', {});
+        //   socket.broadcast.to('hoho').emit('hello2', {});
 
         //   io.sockets.in('hoho').emit('hello', {hi:'world'});
             // group(socket).leave();
@@ -60,6 +62,8 @@ module.exports = function(httpServer){
              socket.emit('login', {
                 numUsers: numUsers 
              });
+
+            
 
              socket.broadcast.emit('user joined', {
                  username: socket.username,
