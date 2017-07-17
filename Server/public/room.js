@@ -43,5 +43,6 @@ socket.on('connect', function(client){
 
     socket.on('chat', function(data){
         console.log(data.message);
+        $('#list').append('<li>' + data.message + '</li>' );
     });
 });

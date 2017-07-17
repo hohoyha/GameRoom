@@ -1,23 +1,39 @@
 
 var usermgr = new UserManager();
 
+var count = 0;
+
 module.exports = function(socket, io){
     // Join(Create), leave
     
     return {
         join: function(name) {
-            console.log("Join:" + name);
-            socket.join(name);
+            count++;
+            
+            socket.join(name, () => {
+                let rooms = Object.keys(socket.rooms);
+                console.log(rooms);
+
+                var test = io.rooms[socket.id];
+            });
+
+           
+            var count = io;
+            console.log("Join:" + name + ":" + count);
             socket.room = name;
+            socket.name = 'Guest' + count;
 
             var nick =  usermgr.requestName();
             var user = new User(nick);
             usermgr.add(user);
         },
 
-        leave: function(name) {
-            console.log("Leave:");
-            socket.leave(socket.room);
+        leave: function() {
+
+            var count = io.rooms.length;
+            console.log("Leave:" + count );
+           
+            // socket.leave(socket.room);
         },
 
         joined : function(name){
@@ -31,6 +47,7 @@ module.exports = function(socket, io){
         },
 
         chat: function(data){
+            data.message = socket.name + ':' +  data.message;
             io.in(socket.room).emit('chat', data );    
         },
 
@@ -40,6 +57,40 @@ module.exports = function(socket, io){
 
         boardcast: function(){
             // socket.boardcast.to('hoho').emit('hello2', {hi:'world'});
+        },
+
+        roomList : function(){
+                // console.log('ROOM LIST', io.adapter.rooms);
+                // console.log('ROOM', io.adapter.rooms.count);
+                var roomList = [];
+
+                Object.keys(io.adapter.rooms).forEach((roomid) => {
+                    // console.log('current room id : ' + roomid);
+                
+                    var outRoom = io.adapter.rooms[roomid];
+
+                    var foundDefault = false;
+                    var index = 0;
+
+                    Object.keys(outRoom.sockets).forEach((key) => {
+                         console.log('#' + index + ' : ' + key + ', ' + outRoom.sockets[key]);
+
+                         if(roomid == key) {
+                             foundDefault = true;
+                            //  console.log('this is default room');
+                         }
+
+                         index++;
+                    });
+
+                    if(!foundDefault){
+                        roomList.push(roomid);
+                    }
+            });
+
+            console.dir(roomList);
+
+            return roomList;
         }
 
     }

@@ -9,6 +9,11 @@ module.exports = function(io){
      nio.on('connect', function(socket){
             console.log('connected');
 
+            socket.on('disconnect', function(data){
+                console.log('disconnect');
+                netFun.leave();
+            });
+
             var netFun = group(socket, nio);
 
             socket.on('join', function(data){ 
@@ -19,6 +24,8 @@ module.exports = function(io){
                 netFun.joined();
                 
                 console.log('join');
+
+                netFun.roomList();
             });
 
             socket.on('leave', function(data){
