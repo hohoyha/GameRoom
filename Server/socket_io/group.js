@@ -11,39 +11,42 @@ module.exports = function(socket, io){
             count++;
             
             socket.join(name, () => {
-                let rooms = Object.keys(socket.rooms);
-                console.log(rooms);
+                // let rooms = Object.keys(socket.rooms);
+                // console.log(rooms);
 
-                var test = io.rooms[socket.id];
+              //  var test = io.rooms[socket.id];
             });
 
            
-            var count = io;
-            console.log("Join:" + name + ":" + count);
+
             socket.room = name;
             socket.name = 'Guest' + count;
 
             var nick =  usermgr.requestName();
             var user = new User(nick);
             usermgr.add(user);
+
+             this.joined();
         },
 
+        get test(){
+            return 'get test';
+        },
+        
         leave: function() {
 
-            var count = io.rooms.length;
-            console.log("Leave:" + count );
-           
-            // socket.leave(socket.room);
+             this.left();
+             socket.leave(socket.room);
         },
 
-        joined : function(name){
+        joined : function(){
             //io.in(name).emit('joinedUser', {message:'test'});
             socket.broadcast.to(socket.room).emit('joinedUser', {message:'joinedUser test'});
         },
 
         left : function(){
             //io.in(name).emit('joinedUser', {message:'test'});
-            socket.broadcast.to(socket.room).emit('joinedUser', {message:'joinedUser test'});
+            socket.broadcast.to(socket.room).emit('leftUser', {message:'leftUser test'});
         },
 
         chat: function(data){
@@ -73,7 +76,7 @@ module.exports = function(socket, io){
                     var index = 0;
 
                     Object.keys(outRoom.sockets).forEach((key) => {
-                         console.log('#' + index + ' : ' + key + ', ' + outRoom.sockets[key]);
+                        //  console.log('#' + index + ' : ' + key + ', ' + outRoom.sockets[key]);
 
                          if(roomid == key) {
                              foundDefault = true;

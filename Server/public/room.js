@@ -1,13 +1,8 @@
 var socket = io.connect('http://localhost:3000/room'); 
-
-  
 var connected = false;
-console.log('socket.io');
-
 
 socket.on('connect', function(client){
-    console.log('real connected');
-
+   
       $('#join').click(function(){
              console.log('join');
              socket.emit('join',{name:$('#name').val()});
@@ -38,6 +33,10 @@ socket.on('connect', function(client){
 
 
      socket.on('joinedUser', function(data){
+        console.log(data.message);
+    });
+
+     socket.on('leftUser', function(data){
         console.log(data.message);
     });
 

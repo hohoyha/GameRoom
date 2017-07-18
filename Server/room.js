@@ -9,23 +9,26 @@ module.exports = function(io){
      nio.on('connect', function(socket){
             console.log('connected');
 
+            var netFun = group(socket, nio);
+
+            console.log(netFun.test);
+
             socket.on('disconnect', function(data){
                 console.log('disconnect');
                 netFun.leave();
             });
-
-            var netFun = group(socket, nio);
 
             socket.on('join', function(data){ 
 
                 socket.emit('joined', {message:'joined'});
                 
                 netFun.join(data.name);
-                netFun.joined();
+            //    netFun.joined();
                 
                 console.log('join');
 
-                netFun.roomList();
+                // var roomlist =  netFun.roomList();
+                // console.log(roomlist);
             });
 
             socket.on('leave', function(data){
