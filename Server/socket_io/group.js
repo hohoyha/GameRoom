@@ -1,11 +1,11 @@
-
+var util = require('util');
+var events = require("events");
 var usermgr = new UserManager();
-
 var count = 0;
 
 module.exports = function(socket, io){
     // Join(Create), leave
-    
+
     return {
         join: function(name) {
             count++;
@@ -18,7 +18,6 @@ module.exports = function(socket, io){
             });
 
            
-
             socket.room = name;
             socket.name = 'Guest' + count;
 
@@ -98,6 +97,9 @@ module.exports = function(socket, io){
 
     }
 };
+
+
+
 
 function UserManager() 
 {
